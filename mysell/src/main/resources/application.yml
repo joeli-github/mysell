@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: test
+    password: test
+    url: jdbc:mysql://localhost:3306/sell?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+  jpa:
+    show-sql: true 
+  
+  ## Freemarker 配置
+##模版存放路径（默认为 classpath:/templates/）
+  freemarker:
+    template-loader-path: classpath:/templates/
+    #是否生成缓存，生成环境建议开启（默认为true） 
+    cache: false
+    ##编码
+    charset: UTF-8
+    ##content-type类型(默认为test/html)
+    content-type: text/html
+    ## 设定所有request的属性在merge到模板的时候，是否要都添加到model中（默认为false）
+    expose-request-attributes: false
+    ##设定所有HttpSession的属性在merge到模板的时候，是否要都添加到model中.(默认为false)
+    expose-session-attributes: false
+    ##RequestContext属性的名称（默认为-）
+    request-context-attribute: request
+    ##模板后缀(默认为.ftl)
+    suffix: .html
+    
+server:
+  servlet:
+    context-path: /mysell   
+
+
+
+
+     
