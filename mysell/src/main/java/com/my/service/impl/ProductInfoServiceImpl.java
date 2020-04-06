@@ -8,11 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.my.common.ServerResponse;
 import com.my.common.enums.ProductStatusEnum;
+import com.my.common.enums.ResultEnum;
 import com.my.dao.ProductCategoryDao;
 import com.my.dao.ProductInfoDao;
+import com.my.dto.CartDTO;
+import com.my.exception.MySellException;
 import com.my.pojo.ProductCategory;
 import com.my.pojo.ProductInfo;
 import com.my.service.ProductInfoService;
@@ -46,6 +50,7 @@ public class ProductInfoServiceImpl implements ProductInfoService {
 		return productInfoDao.findAll(pageable);
 	}
 
+	/**查询所有上架商品及分类	 */
 	@Override
 	public ServerResponse<List<ProductCategoryVO>> findUpAll() {
 		
@@ -55,6 +60,10 @@ public class ProductInfoServiceImpl implements ProductInfoService {
 		for (ProductInfo productInfo : productInfoList) {
 			categoryTypeList.add(productInfo.getCategoryType());
 		}
+		//精简方法java8,lambda
+//		List<Integer> categoryTypeList = productInfoList.stream()
+//				.map(e -> e.getCategoryType())
+//				.collect(Collectors.toList());
 		List<ProductCategory> productCategoryList = productCategoryDao.findByCategoryTypeIn(categoryTypeList);
 		for (ProductCategory productCategory : productCategoryList) {
 			ProductCategoryVO productCategoryVO = new ProductCategoryVO();
@@ -67,8 +76,8 @@ public class ProductInfoServiceImpl implements ProductInfoService {
 					BeanUtils.copyProperties(productInfo, productVO);
 					productVOList.add(productVO);
 				}
-				productCategoryVO.setProductVOList(productVOList);
 			}
+			productCategoryVO.setProductVOList(productVOList);
 			productCategoryVOList.add(productCategoryVO);
 		}
 		
@@ -80,6 +89,41 @@ public class ProductInfoServiceImpl implements ProductInfoService {
 		
 		
 		
+	}
+
+	@Override
+	@Transactional
+	public void decreaseStock(List<CartDTO> cartDTOList) {
+
+		for (CartDTO cartDTO : cartDTOList) {
+			ProductInfo productInfo = productInfoDao.findById(cartDTO.getProductId()).get();
+			if (productInfo==null) {
+				throw new MySellException(ResultEnum.PRODUCT_NOT_EXIST);
+				
+			}
+			Integer result = productInfo.getProductStock()-cartDTO.getProductQuantity();
+			if (result<0) {
+				throw new MySellException(ResultEnum.PRODUCT_STOCK_ERROR);
+				
+			}
+			productInfo.setProductStock(result);
+			productInfoDao.save(productInfo);
+		}
+	}
+
+	@Override
+	@Transactional
+	public void increaseStock(List<CartDTO> cartDTOList) {
+		for (CartDTO cartDTO : cartDTOList) {
+			ProductInfo productInfo = productInfoDao.findById(cartDTO.getProductId()).get();
+			if (productInfo==null) {
+				throw new MySellException(ResultEnum.PRODUCT_NOT_EXIST);
+				
+			}
+			Integer result = productInfo.getProductStock()+cartDTO.getProductQuantity();
+			productInfo.setProductStock(result);
+			productInfoDao.save(productInfo);
+		}
 	}
 
 	

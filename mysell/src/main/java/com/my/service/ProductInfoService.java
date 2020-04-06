@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.my.common.ServerResponse;
+import com.my.dto.CartDTO;
 import com.my.pojo.ProductInfo;
 import com.my.vo.ProductCategoryVO;
 
@@ -23,4 +24,9 @@ public interface ProductInfoService {
 	
 	List<ProductInfo> findByProductStatus(Integer productStatus);
 	
+	//减库存
+	void decreaseStock(List<CartDTO> cartDTOList);
+	
+	//加库存
+	void increaseStock(List<CartDTO> cartDTOList);
 }

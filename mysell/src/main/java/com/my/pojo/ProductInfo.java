@@ -37,7 +37,7 @@ public class ProductInfo {
     /** 商品图片 */
     private String productIcon;
     
-    /** 商品状态*/
+    /** 商品状态，0正常1下架*/
     private Integer productStatus;
     
     /** 商品编号 */

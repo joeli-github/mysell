@@ -8,6 +8,9 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.my.common.enums.OrderStatusEnum;
+import com.my.common.enums.PayStatusEnum;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,9 +35,9 @@ public class OrderMaster {
 
     private BigDecimal orderAmount;
 
-    private Integer orderStatus;
+    private Integer orderStatus = OrderStatusEnum.NEW.getCode();
 
-    private Integer payStatus;
+    private Integer payStatus = PayStatusEnum.WAIT.getCode();
 
     private Date createTime;
 
